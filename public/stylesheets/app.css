@@ -5,3 +5,8 @@ i.icon {
 .container.main {
     margin-top: 7.0em;
 }
+
+.blogImage {
+    width: 300px;
+    height: 200px;
+}
