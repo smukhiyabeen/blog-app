@@ -6,7 +6,8 @@ const bodyParser = require('body-parser'),
       port = 3000,
       app = express(),
       uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-fkjkr.mongodb.net/blog-app?retryWrites=true&w=majority`,
-      methodOverride = require('method-override');
+      methodOverride = require('method-override'),
+      expressSanitizer = require('express-sanitizer');
 
 
 
@@ -15,6 +16,7 @@ mongoose.connect(uri, { useNewUrlParser: true });
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(expressSanitizer());
 app.use(methodOverride("_method"));
 
 // Mongoose/Model config
@@ -53,13 +55,14 @@ app.get('/blogs/new', (req, res) => {
 });
 // CREATE ROUTE
 app.post('/blogs', (req, res) => {
+    // req.body.blog.body = req.sanitize(req.body.blog.body);
     Blog.create(req.body.blog, (err, newBlog) => {
         if (err) {
             res.render('new')
         } else {
             res.redirect('/blogs')
         }
-    })
+    });
 });
 
 /// SHOW ROUTE
