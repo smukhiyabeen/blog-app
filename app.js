@@ -5,7 +5,8 @@ const bodyParser = require('body-parser'),
       express = require('express'),
       port = 3000,
       app = express(),
-      uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-fkjkr.mongodb.net/blog-app?retryWrites=true&w=majority`;
+      uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-fkjkr.mongodb.net/blog-app?retryWrites=true&w=majority`,
+      methodOverride = require('method-override');
 
 
 
@@ -14,6 +15,7 @@ mongoose.connect(uri, { useNewUrlParser: true });
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride("_method"));
 
 // Mongoose/Model config
 const blogSchema = new mongoose.Schema({
@@ -71,6 +73,27 @@ app.get('/blogs/:id', (req, res) => {
     });
 });
 
+// EDIT  ROUTE
+app.get('/blogs/:id/edit', (req, res) => {
+    Blog.findById(req.params.id, (err, foundBlog) => {
+        if (err) {
+            res.redirect('/blogs')
+        } else {
+            res.render('edit', {blog: foundBlog});
+        }
+    });
+});
+
+// UPDATE ROUTE
+app.put('/blogs/:id', (req, res) => {
+    Blog.findByIdAndUpdate(req.params.id, req.body.blog, (err, updatedBlog) => {
+        if (err) {
+            res.redirect('/blogs');
+        } else {
+            res.redirect(`/blogs/${req.params.id}`);
+        }
+    });
+})
 
 app.listen(port, () => {
     console.log(`App started on port: ${port}`);
