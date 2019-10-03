@@ -3,7 +3,7 @@ require('dotenv').config();
 const bodyParser = require('body-parser'),
       mongoose = require('mongoose'),
       express = require('express'),
-      port = 3000,
+      port = process.env.PORT || 3000,
       app = express(),
       uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-fkjkr.mongodb.net/blog-app?retryWrites=true&w=majority`,
       methodOverride = require('method-override'),
